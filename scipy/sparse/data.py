@@ -91,6 +91,32 @@ class _data_matrix(spmatrix):
     def __ge__(self, other):
         return self._relative(other, operator.__ge__)
 
+    def __and__(self, other):
+        if isinstance(other, mostly_true_matrix):
+            try:
+                return self[other]
+            except IndexError:
+                raise NotImplementedError(
+                    '%s ^ mostly_true_matrix not yet implemented'
+                    % self.__class__)
+        if not hasattr(other, 'astype'):
+            other = np.asarray(other)
+        return self.astype(bool).astype(int) + other.astype(bool) == 2
+
+    def __or__(self, other):
+        if isinstance(other, mostly_true_matrix):
+            raise NotImplementedError("Can't perform | with mostly_true_matrix")
+        if not hasattr(other, 'astype'):
+            other = np.asarray(other)
+        return self.astype(bool).astype(int) + other.astype(bool) > 0
+
+    def __xor__(self, other):
+        if isinstance(other, mostly_true_matrix):
+            raise NotImplementedError("Can't perform ^ with mostly_true_matrix")
+        if not hasattr(other, 'astype'):
+            other = np.asarray(other)
+        return self.astype(bool).astype(int) + other.astype(bool) == 1
+
     def astype(self, t):
         return self._with_data(self.data.astype(t))
 
