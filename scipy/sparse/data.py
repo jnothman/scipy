@@ -7,6 +7,7 @@
 """
 
 from __future__ import division, print_function, absolute_import
+import operator
 
 __all__ = []
 
@@ -62,6 +63,33 @@ class _data_matrix(spmatrix):
             return self
         else:
             raise NotImplementedError
+
+    def _relative(self, other, op):
+        if isscalarlike(other):
+            data = op(self.data, other)
+            if op(0, other):
+                return mostly_true_matrix(self._with_data(~data))
+            return self._with_data(data)
+        else:
+            raise NotImplementedError
+
+    def __lt__(self, other):
+        return self._relative(other, operator.__lt__)
+
+    def __le__(self, other):
+        return self._relative(other, operator.__le__)
+
+    def __eq__(self, other):
+        return self._relative(other, operator.__eq__)
+
+    def __ne__(self, other):
+        return self._relative(other, operator.__ne__)
+
+    def __gt__(self, other):
+        return self._relative(other, operator.__gt__)
+
+    def __ge__(self, other):
+        return self._relative(other, operator.__ge__)
 
     def astype(self, t):
         return self._with_data(self.data.astype(t))
