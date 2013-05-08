@@ -14,6 +14,7 @@ import numpy as np
 
 from .base import spmatrix
 from .sputils import isscalarlike
+from .mtm import mostly_true_matrix
 
 
 # TODO implement all relevant operations
@@ -40,6 +41,12 @@ class _data_matrix(spmatrix):
 
     def __neg__(self):
         return self._with_data(-self.data)
+
+    def __invert__(self):
+        if self.dtype == np.bool:
+            return mostly_true_matrix(self)
+        else:
+            return self._with_data(~self.data)
 
     def __imul__(self, other):  # self *= other
         if isscalarlike(other):
