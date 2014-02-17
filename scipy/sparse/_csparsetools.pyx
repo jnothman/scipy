@@ -8,6 +8,7 @@ cimport cpython.int
 cimport cpython
 cimport numpy as cnp
 import numpy as np
+from cpython cimport PyDict_GetItem, PyObject
 
 
 ctypedef fused idx_t:
@@ -163,8 +164,9 @@ cpdef dok_fancy_get(o, idx_t[:,:] i, idx_t[:,:] j):
     cdef dict d = <dict> o
     cdef int a
     cdef int b
+    cdef PyObject *v
     for a in xrange(i.shape[0]):
         for b in xrange(i.shape[1]):
-            v = d.get((i[a,b], j[a,b]), 0.)
-            if v != 0:
-                d[(a, b)] = v
+            v = PyDict_GetItem(d, (i[a,b], j[a,b]))
+            if v != NULL:
+                d[(a, b)] = <object> v
