@@ -199,7 +199,11 @@ class dok_matrix(spmatrix, IndexMixin, dict):
 
         newdok = dok_matrix(i.shape, dtype=self.dtype)
 
-        _csparsetools.dok_fancy_get(super(dok_matrix, newdok), i, j)
+        if not i.flags.writeable:
+            i = i.copy()
+        if not j.flags.writeable:
+            j = j.copy()
+        _csparsetools.dok_fancy_get(super(dok_matrix, newdok), i.copy(), j.copy())
 
         return newdok
 

@@ -159,7 +159,7 @@ cdef bisect_left(list a, cnp.npy_intp x):
     return lo
 
 
-cpdef dok_fancy_get(o, cnp.ndarray i, cnp.ndarray j):
+cpdef dok_fancy_get(o, idx_t[:,:] i, idx_t[:,:] j):
     cdef dict d = <dict> o
     cdef int a
     cdef int b
