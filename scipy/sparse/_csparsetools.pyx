@@ -157,3 +157,14 @@ cdef bisect_left(list a, cnp.npy_intp x):
         else:
             hi = mid
     return lo
+
+
+cpdef dok_fancy_get(o, cnp.ndarray i, cnp.ndarray j):
+    cdef dict d = <dict> o
+    cdef int a
+    cdef int b
+    for a in xrange(i.shape[0]):
+        for b in xrange(i.shape[1]):
+            v = d.get((i[a,b], j[a,b]), 0.)
+            if v != 0:
+                d[(a, b)] = v

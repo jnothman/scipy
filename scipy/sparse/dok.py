@@ -17,6 +17,7 @@ from scipy.lib.six import iteritems
 from .base import spmatrix, isspmatrix
 from .sputils import (isdense, getdtype, isshape, isintlike, isscalarlike,
                       upcast, upcast_scalar, IndexMixin, get_index_dtype)
+from . import _csparsetools
 
 try:
     from operator import isSequenceType as _is_sequence
@@ -198,11 +199,7 @@ class dok_matrix(spmatrix, IndexMixin, dict):
 
         newdok = dok_matrix(i.shape, dtype=self.dtype)
 
-        for a in xrange(i.shape[0]):
-            for b in xrange(i.shape[1]):
-                v = dict.get(self, (i[a,b], j[a,b]), 0.)
-                if v != 0:
-                    dict.__setitem__(newdok, (a, b), v)
+        _csparsetools.dok_fancy_get(super(dok_matrix, newdok), i, j)
 
         return newdok
 
